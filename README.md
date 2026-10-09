@@ -86,6 +86,10 @@ Genera `dist/` (estático, ~60 KB gzip). Se puede previsualizar con `npm run pre
 
 ## Instalar en el teléfono (recomendado para uso personal)
 
+La app se publica automáticamente en **https://matigbh.github.io/relojpio/** con cada push a `main` (workflow `.github/workflows/deploy.yml`: tests → build → GitHub Pages). Abre esa URL en el teléfono y sigue el paso 2.
+
+Para publicarla en otro hosting:
+
 1. Publica la carpeta `dist/` en cualquier hosting estático con HTTPS (gratis):
    - **Netlify Drop**: arrastra la carpeta `dist` en https://app.netlify.com/drop.
    - **GitHub Pages**, **Vercel** o **Cloudflare Pages** también sirven (la app usa rutas relativas, funciona en subcarpetas).
