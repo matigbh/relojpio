@@ -15,6 +15,9 @@
   --panel-tint: 14%;
   --panel-tint-active: 30%;
   --border-width: 2px;
+  --table-bg: #000;
+  --turn: #2f8cff;
+  --stop: #ffd21f;
   color-scheme: dark;
 }
 
@@ -33,6 +36,9 @@
   --scrim: rgba(30, 25, 20, 0.45);
   --panel-tint: 22%;
   --panel-tint-active: 42%;
+  --table-bg: #e9e5dd;
+  --turn: #1a6fe0;
+  --stop: #f5c400;
   color-scheme: light;
 }
 
@@ -52,6 +58,9 @@
   --panel-tint: 6%;
   --panel-tint-active: 16%;
   --border-width: 3px;
+  --table-bg: #000;
+  --turn: #3da0ff;
+  --stop: #ffd400;
   color-scheme: dark;
 }
 
@@ -150,10 +159,10 @@ button:not(:disabled):active {
   position: fixed;
   inset: 0;
   display: grid;
-  gap: 6px;
-  padding: max(6px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom))
-    max(6px, env(safe-area-inset-left));
-  background: var(--bg);
+  gap: 8px;
+  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom))
+    max(8px, env(safe-area-inset-left));
+  background: var(--table-bg);
   user-select: none;
   -webkit-user-select: none;
 }
@@ -191,18 +200,25 @@ button:not(:disabled):active {
 }
 
 .hub-btn.main {
+  display: grid;
+  place-items: center;
   width: 54px;
   height: 54px;
-  background: var(--accent);
-  color: var(--on-accent);
-  font-size: 16px;
-  letter-spacing: -2px;
+  background: var(--stop);
+  color: #000;
+  border-color: transparent;
+  font-size: 22px;
 }
 
 .hub-btn.main[data-paused] {
-  letter-spacing: 0;
-  font-size: 22px;
   animation: pulse 1.2s infinite;
+}
+
+.stop-icon {
+  width: 34%;
+  height: 34%;
+  border-radius: 3px;
+  background: #000;
 }
 
 /* ───────────── Player panel (sized with container units of its own rotated frame) ───────────── */
@@ -212,8 +228,8 @@ button:not(:disabled):active {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 2.5cqh;
-  padding: 3.5cqh 3cqw;
-  border-radius: 18px;
+  padding: 3cqh 3cqw;
+  border-radius: 22px;
   background: color-mix(in srgb, var(--pc) var(--panel-tint), var(--surface));
   border: var(--border-width) solid color-mix(in srgb, var(--pc) 40%, transparent);
   transition:
@@ -225,10 +241,10 @@ button:not(:disabled):active {
 
 .panel[data-active] {
   background: color-mix(in srgb, var(--pc) var(--panel-tint-active), var(--surface));
-  border-color: var(--pc);
+  border-color: var(--turn);
   box-shadow:
-    inset 0 0 0 3px var(--pc),
-    0 0 22px color-mix(in srgb, var(--pc) 55%, transparent);
+    inset 0 0 0 2px var(--turn),
+    0 0 14px color-mix(in srgb, var(--turn) 60%, transparent);
 }
 
 .panel[data-eliminated] > :not(.panel-eliminated) {
@@ -246,26 +262,27 @@ button:not(:disabled):active {
 
 .panel-id {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: baseline;
+  gap: 1.5cqw;
   min-width: 0;
   text-align: left;
   line-height: 1.1;
 }
 
 .panel-name {
-  font-size: max(13px, min(8.5cqh, 6cqw));
+  flex: none;
+  font-size: max(13px, min(10cqh, 5.5cqw));
   font-weight: 800;
-  max-width: 100%;
+  max-width: 60%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .panel-cmdr {
-  font-size: max(11px, min(6cqh, 4.2cqw));
+  min-width: 0;
+  font-size: max(11px, min(7cqh, 3.8cqw));
   color: var(--muted);
-  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -274,25 +291,23 @@ button:not(:disabled):active {
 .cd-chips {
   display: flex;
   align-items: center;
-  gap: 1cqw;
+  gap: 1.2cqw;
   flex: none;
-  padding: 1cqh 1.5cqw;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--text) 8%, transparent);
-  border: 1px solid var(--line);
-  font-size: max(12px, min(7cqh, 4.5cqw));
+  font-size: max(11px, min(7cqh, 3.8cqw));
 }
 
 .cd-icon {
-  opacity: 0.8;
+  font-size: 1.3em;
 }
 
 .cd-chip {
-  min-width: 2em;
-  padding: 0.05em 0.4em;
-  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  width: max(22px, 2.1em);
+  aspect-ratio: 1;
+  border-radius: 50%;
   border: 2px solid var(--oc);
-  background: color-mix(in srgb, var(--oc) 30%, transparent);
+  background: color-mix(in srgb, var(--oc) 22%, transparent);
   font-weight: 800;
   text-align: center;
   font-variant-numeric: tabular-nums;
@@ -351,24 +366,19 @@ button:not(:disabled):active {
 
 .life-row {
   display: grid;
-  grid-template-columns: 1fr 1.3fr 2.4fr 1.3fr 1fr;
+  grid-template-columns: 1fr 1fr 2.8fr 1fr 1fr;
   gap: 1.6cqw;
   min-height: 0;
 }
 
 .life-btn {
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 14px;
-  background: color-mix(in srgb, var(--text) 7%, transparent);
+  background: color-mix(in srgb, var(--text) 9%, transparent);
   border: 1px solid var(--line);
-  font-size: max(14px, min(10cqh, 6cqw));
-  font-weight: 700;
-  color: var(--muted);
-}
-
-.life-btn[data-big] {
-  font-size: max(18px, min(15cqh, 8.5cqw));
-  color: var(--text);
-  background: color-mix(in srgb, var(--text) 11%, transparent);
+  font-size: max(16px, min(11cqh, 6cqw));
+  font-weight: 800;
 }
 
 .life-value {
@@ -380,7 +390,7 @@ button:not(:disabled):active {
 }
 
 .life-number {
-  font-size: min(48cqh, 24cqw);
+  font-size: min(38cqh, 20cqw);
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.03em;
@@ -403,7 +413,7 @@ button:not(:disabled):active {
 .panel-foot {
   display: flex;
   gap: 2cqw;
-  height: max(36px, 22cqh);
+  height: max(44px, 30cqh);
 }
 
 .clock {
@@ -419,8 +429,9 @@ button:not(:disabled):active {
 }
 
 .clock-time {
-  font-size: max(16px, min(15cqh, 8cqw));
+  font-size: max(18px, min(17cqh, 9cqw));
   font-weight: 800;
+  line-height: 1;
 }
 
 .clock-turn,
@@ -431,10 +442,19 @@ button:not(:disabled):active {
   opacity: 0.8;
 }
 
+/* Active player: compact white pill with "TURNO" over the time, next to a wide pass button. */
 .panel[data-active] .clock {
-  background: var(--text);
-  color: var(--bg);
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 0.5cqh;
+  padding: 0 4cqw;
+  background: #fff;
+  color: #000;
   border-color: transparent;
+}
+
+.panel[data-active] .clock-time {
+  font-size: max(16px, min(13cqh, 7cqw));
 }
 
 .panel[data-low] .clock {
@@ -454,14 +474,27 @@ button:not(:disabled):active {
 }
 
 .pass-btn {
-  flex: 1.15;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2cqw;
+  min-width: 0;
   border-radius: 12px;
-  background: var(--pc);
+  background: var(--turn);
   color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-  font-size: max(14px, min(9cqh, 5.5cqw));
+  font-size: max(14px, min(10cqh, 5.5cqw));
   font-weight: 800;
-  box-shadow: 0 3px 0 color-mix(in srgb, var(--pc) 60%, #000);
+}
+
+.pass-btn > span {
+  order: 1;
+}
+
+.pass-arrow {
+  flex: none;
+  width: 1.3em;
+  height: 1.3em;
 }
 
 .pass-btn.start {

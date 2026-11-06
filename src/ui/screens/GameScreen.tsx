@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { describeEvent } from '../../core/format';
-import { findPlayer } from '../../core/players';
+import { findPlayer, nextPlayerId } from '../../core/players';
 import type { GameState, PlayerId } from '../../core/types';
 import type { Settings } from '../../settings/settings';
 import { CenterHub } from '../components/CenterHub';
@@ -11,8 +11,9 @@ import { PlayerPanel } from '../components/PlayerPanel';
 import { PlayerSheet } from '../components/PlayerSheet';
 import { useGame } from '../hooks/useGame';
 import { useGameFeedback } from '../hooks/useGameFeedback';
+import { useViewportSize } from '../hooks/useViewportSize';
 import { useWakeLock } from '../hooks/useWakeLock';
-import { tableLayoutFor } from '../layout';
+import { passArrowAngle, tableLayoutFor } from '../layout';
 
 interface GameScreenProps {
   initialGame: GameState;
@@ -32,6 +33,7 @@ export function GameScreen({ initialGame, settings, onSettingsChange, onExit }: 
 
   useGameFeedback(state, now, settings);
   useWakeLock(settings.keepAwake);
+  const viewport = useViewportSize();
 
   useEffect(() => {
     if (toast == null) return;
@@ -42,6 +44,12 @@ export function GameScreen({ initialGame, settings, onSettingsChange, onExit }: 
   const layout = tableLayoutFor(state.players.length);
   const rotationOf = (playerId: PlayerId) => layout.seats[findPlayer(state.players, playerId)?.seat ?? 0].rotation;
   const detailsPlayer = detailsFor ? findPlayer(state.players, detailsFor) : undefined;
+
+  // The pass arrow points at whoever `passTurn` would activate, as seen from the active seat.
+  const activePlayer = state.clock.activePlayerId ? findPlayer(state.players, state.clock.activePlayerId) : undefined;
+  const nextPlayer = activePlayer ? findPlayer(state.players, nextPlayerId(state.players, activePlayer.id) ?? '') : undefined;
+  const passArrowDegrees =
+    activePlayer && nextPlayer ? passArrowAngle(layout, activePlayer.seat, nextPlayer.seat, viewport) : null;
 
   const undoWithToast = () => {
     const last = state.history[state.history.length - 1];
@@ -69,6 +77,7 @@ export function GameScreen({ initialGame, settings, onSettingsChange, onExit }: 
                 player={player}
                 game={state}
                 now={now}
+                passArrowDegrees={player.id === activePlayer?.id ? passArrowDegrees : null}
                 onAdjustLife={(delta) => actions.adjustLife(player.id, delta)}
                 onEditLife={() =>
                   setKeypad({

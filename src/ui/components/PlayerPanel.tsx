@@ -11,6 +11,8 @@ interface PlayerPanelProps {
   player: Player;
   game: GameState;
   now: number;
+  /** Direction (in this panel's own frame) of the "Pasar turno" arrow; null hides it. */
+  passArrowDegrees: number | null;
   onAdjustLife: (delta: number) => void;
   onEditLife: () => void;
   onOpenDetails: () => void;
@@ -29,7 +31,17 @@ function lifeFlashKey(entry: HistoryEntry | undefined, player: Player): { key: s
   return { key: `${entry.id}:${entry.event.delta}`, delta: entry.event.delta };
 }
 
-export function PlayerPanel({ player, game, now, onAdjustLife, onEditLife, onOpenDetails, onPass, onActivate }: PlayerPanelProps) {
+export function PlayerPanel({
+  player,
+  game,
+  now,
+  passArrowDegrees,
+  onAdjustLife,
+  onEditLife,
+  onOpenDetails,
+  onPass,
+  onActivate,
+}: PlayerPanelProps) {
   const { clock, config, players } = game;
   const isActive = clock.activePlayerId === player.id;
   const gameStarted = clock.activePlayerId != null;
@@ -55,7 +67,6 @@ export function PlayerPanel({ player, game, now, onAdjustLife, onEditLife, onOpe
     <button
       key={delta}
       className="life-btn"
-      data-big={Math.abs(delta) === 1 || undefined}
       onClick={() => onAdjustLife(delta)}
       aria-label={`${formatSigned(delta)} vida`}
     >
@@ -133,7 +144,8 @@ export function PlayerPanel({ player, game, now, onAdjustLife, onEditLife, onOpe
         </button>
         {isActive ? (
           <button className="pass-btn" onClick={onPass}>
-            Pasar turno <span aria-hidden>➜</span>
+            <PassArrow degrees={passArrowDegrees} />
+            <span>Pasar turno</span>
           </button>
         ) : (
           !gameStarted && (
@@ -151,5 +163,23 @@ export function PlayerPanel({ player, game, now, onAdjustLife, onEditLife, onOpe
         </button>
       )}
     </section>
+  );
+}
+
+/**
+ * Arrow pointing at the next player. Rendered before the label when it points backwards in the
+ * panel's frame, so the label never sits between the arrow and its target.
+ */
+function PassArrow({ degrees }: { degrees: number | null }) {
+  if (degrees == null) return null;
+  return (
+    <svg
+      className="pass-arrow"
+      viewBox="0 0 24 24"
+      aria-hidden
+      style={{ transform: `rotate(${degrees}deg)`, order: Math.abs(degrees) > 100 ? 0 : 2 }}
+    >
+      <path d="M4 12h14M12 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }

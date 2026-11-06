@@ -11,6 +11,7 @@ import {
 } from '../../settings/setupPreferences';
 import { Segmented } from '../components/controls';
 import { SettingsPanel } from '../components/SettingsPanel';
+import { tableLayoutFor } from '../layout';
 
 interface SetupScreenProps {
   setup: SetupPreferences;
@@ -113,7 +114,12 @@ export function SetupScreen({ setup, onSetupChange, settings, onSettingsChange, 
             </li>
           ))}
         </ol>
-        <p className="hint">El orden es el de turno (sentido horario). El jugador 1 se sienta abajo.</p>
+        <p className="hint">
+          Orden de turno (sentido horario):{' '}
+          {tableLayoutFor(setup.playerCount)
+            .seats.map((seat, index) => `${index + 1} ${seat.label}`)
+            .join(' · ')}
+        </p>
       </section>
 
       <section className="card">
